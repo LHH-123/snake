@@ -5,14 +5,22 @@
 <title>贪吃蛇</title>
 <style type="text/css">
 	body{background-image:url(back.jpg);}
-   #wrap{width:700px;margin:0 auto;}
+   #wrap{width:700px;margin:0 auto; margin-top: 20px;}
    table{border-spacing: 0px;border:1px solid gray;}
    td{width:14px;height:14px;border:1px solid #336699;box-sizing:border-box;}
+   .btn-wrap{ width: 60%; margin: 0 auto; margin-top: 10px;}
+   .btn-wrap button{color: red;width: 24%;height: 20%; }
 </style>
 </head>
 <body>
 <div id="wrap-all">
-<div id="wrap"></div>	
+<div id="wrap"></div>
+<div class="btn-wrap">
+	<button id="left-btn"><</button>
+	<button id="top-btn">^</button>
+	<button id="right-btn">></button>
+	<button id="bottom-btn">∨</button>
+</div>	
 </div>
 <script type="text/javascript">
 
@@ -166,14 +174,9 @@ GameMgr.prototype =
 
 		this.food.initFood(this.map.width,this.map.height);
 		this.map.drawFood(this.food);
+		this.getDir();
 
 		var that = this;
-
-		this.addEvent(window, 'keydown', function()
-		{ 
-			that.snake.dir = that.getDir(event,that.snake.dir);
-			//将事件监听器处理结果返回到snake中
-		});
 		var timmer = setInterval(function()
 		{
             that.map.clearMap();
@@ -218,8 +221,7 @@ GameMgr.prototype =
 				clearInterval(timmer);
 				alert(this.score + "分,"+"哥们儿，你撞到自己啦");
 		        return;
-			}
-			
+			}			
 		}
 /*		if(this.food.num == 1)
 		{
@@ -229,28 +231,50 @@ GameMgr.prototype =
 		}	*/    		
 		
 	},
-	getDir:function(event,dir)
+	getDir:function()
     {
-	    var keyCode = event.keyCode ||event.which;
-	    switch(keyCode)
-	    {
-		    case 37: 
-		    if(dir != "right") dir = "left";
-		    return dir;
-		    case 38: 
-		    if(dir != "down" ) dir = "up";
-		    return dir;
-		    case 39:
-		    if(dir != "left" ) dir = "right";
-		    return dir;
-		    case 40: 
-		    if(dir != "up" )  dir = "down";
-		    return dir;
-	    }
+    	
+    	var that = this;
+	    this.addEvent(window, 'keydown', function()
+		{ 
+			var keyCode = event.keyCode ||event.which;
+			switch(keyCode)
+		    {
+			    case 37: 
+			    if(that.snake.dir != "right") that.snake.dir = "left";
+			    break;
+			    case 38: 
+			    if(that.snake.dir != "down" ) that.snake.dir = "up";
+			    break;
+			    case 39:
+			    if(that.snake.dir != "left" ) that.snake.dir = "right";
+			    break;
+			    case 40: 
+			    if(that.snake.dir != "up" )  that.snake.dir = "down";
+			    break;
+		    }
+
+		});
+	    this.addEvent(document.getElementById('left-btn'), 'click', function () {
+			if(that.snake.dir != "right") that.snake.dir = "left";
+	    });
+	    this.addEvent(document.getElementById('top-btn'), 'click', function () {
+	    	if(that.snake.dir != "down") that.snake.dir = "up";
+	    });
+	    this.addEvent(document.getElementById('right-btn'), 'click', function () {
+	    	if(that.snake.dir != "left") that.snake.dir = "right";
+	    });
+	    this.addEvent(document.getElementById('bottom-btn'), 'click', function () {
+	    	if(that.snake.dir != "up") that.snake.dir = "down";
+	    });
+
     },
     addEvent:function(ele,type,handler)
     {
 	    return ele.addEventListener ? ele.addEventListener(type,handler, false) : ele.attachEvent('on'+type, handler);
+    },
+    getElement: function(id){
+    	return document.getElementById(id) || id;
     }
 
 }
